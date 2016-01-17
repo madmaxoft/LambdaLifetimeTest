@@ -1,0 +1,17 @@
+
+# VS project files:
+*.sln
+*.vcxproj
+*.filters
+*.sdf
+*.opensdf
+
+# CMake configuration files:
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+
+# VS build files:
+Debug/
+Release/
+LambdaLifetimeTest.dir/
