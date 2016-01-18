@@ -16,6 +16,9 @@ using namespace std;
 
 
 
+////////////////////////////////////////////////////////////////////////////////
+// Scheduler:
+
 class Scheduler
 {
 public:
@@ -41,6 +44,9 @@ public:
 
 
 
+
+////////////////////////////////////////////////////////////////////////////////
+// Task:
 
 class Task
 {
@@ -74,6 +80,37 @@ public:
 
 
 
+
+////////////////////////////////////////////////////////////////////////////////
+// MovedTask:
+
+class MovedTask
+{
+	class NonCopyableMember
+	{
+	public:
+		NonCopyableMember(void) {}
+		NonCopyableMember(const NonCopyableMember &) = delete;
+	};
+public:
+	NonCopyableMember m_NonCopyable;
+
+	MovedTask(void) {}
+
+	void operator()(Scheduler & a_Scheduler)
+	{
+		cout << "** Executing moved-task at " << this << endl;
+	}
+
+	MovedTask(const MovedTask &) = delete;
+};
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Tests:
 
 void testLambda(Scheduler & a_Scheduler)
 {
@@ -124,6 +161,34 @@ void testInstance(Scheduler & a_Scheduler)
 
 
 
+void testMovedMember(Scheduler & a_Scheduler)
+{
+	cout << "==== Moved-member test ====" << endl;
+	{
+		cout << "Creating task instance" << endl;
+		MovedTask task;
+		cout << "Task instance is at " << &task << endl;
+		cout << "Scheduling task" << endl;
+
+		// Doesn't compile in MSVC:
+		// error C2280: 'MovedTask::MovedTask(const MovedTask &)' : attempting to reference a deleted function
+		// a_Scheduler.schedule(task);
+
+		cout << "Task going out of scope" << endl;
+	}
+
+	cout << "Calling scheduler with potentially invalid task" << endl;
+	a_Scheduler.run();
+	cout << "==== Moved-member test done ====" << endl;
+}
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+// main:
+
 int main(int, char *[])
 {
 	cout << "Starting the test" << endl;
@@ -133,6 +198,7 @@ int main(int, char *[])
 
 	testLambda(sched);
 	testInstance(sched);
+	testMovedMember(sched);
 
 	cout << "Running scheduler in the outer function" << endl;
 	sched.run();

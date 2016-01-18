@@ -5,6 +5,7 @@
 *.filters
 *.sdf
 *.opensdf
+*.suo
 
 # CMake configuration files:
 CMakeFiles/
